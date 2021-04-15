@@ -31,7 +31,7 @@ class BinaryGate(LogicGate):
             return int(input("Enter pin B "+self.getLabel()+"--> "))
         else:
             return self.pinB.getFrom().getOutput()
-    
+
     def setNextPin(self, source):
         if self.pinA == None:
             self.pinA = source
@@ -40,6 +40,7 @@ class BinaryGate(LogicGate):
                 self.pinB = source
             else:
                 raise RuntimeError("No Empty Pins")
+
 
 class UnaryGate(LogicGate):
 
@@ -89,6 +90,48 @@ class OrGate(BinaryGate):
             return 1
 
 
+class AndNotGate(BinaryGate):
+
+    def __init__(self, n):
+        super().__init__(n)
+
+    def performGateLogic(self):
+        a = self.getPinA()
+        b = self.getPinB()
+        if a == 1 and b == 1:
+            return 0
+        else:
+            return 1
+
+
+class OrNotGate(BinaryGate):
+
+    def __init__(self, n):
+        super().__init__(n)
+
+    def performGateLogic(self):
+        a = self.getPinA()
+        b = self.getPinB()
+        if a == 0 and b == 0:
+            return 1
+        else:
+            return 0
+
+
+class ExOrGate(BinaryGate):
+
+    def __init__(self, n):
+        super().__init__(n)
+
+    def performGateLogic(self):
+        a = self.getPinA()
+        b = self.getPinB()
+        if a == b:
+            return 0
+        else:
+            return 1
+
+
 class NotGate(UnaryGate):
 
     def __init__(self, n):
@@ -101,20 +144,22 @@ class NotGate(UnaryGate):
         elif v == 1:
             return 0
 
+
 class Connector:
 
     def __init__(self, fgate, tgate):
         self.fromgate = fgate
         self.togate = tgate
 
-        tgate.setNextPin(self)   
+        tgate.setNextPin(self)
         # 先给tgate的pin赋值为source，后面作为togate的一方调用getPin时便不会要求输入，而是继续通过getFrom().getOutput()向前寻找
-    
+
     def getFrom(self):
         return self.fromgate
-    
+
     def getTo(self):
         return self.togate
+
 
 g1 = AndGate("G1")
 g2 = AndGate("G2")
